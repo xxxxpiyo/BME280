@@ -21,20 +21,20 @@ class BME280:
     def __init__(self, address = 0x76, number = 1):
         self.setup()
         self.get_calib_param()
-        self.i2c_address = i2c_address
+        self.i2c_address = address
         self.bus_number = number
 
-    def writeReg(reg_address, data):
-    	self.bus.write_byte_data(i2c_address,reg_address,data)
+    def writeReg(self, reg_address, data):
+    	self.bus.write_byte_data(self.i2c_address,reg_address,data)
 
     def get_calib_param(self):
     	calib = []
 
     	for i in range (0x88,0x88+24):
-    		calib.append(bus.read_byte_data(i2c_address,i))
-    	calib.append(bus.read_byte_data(i2c_address,0xA1))
+    		calib.append(self.bus.read_byte_data(self.i2c_address,i))
+    	calib.append(self.bus.read_byte_data(self.i2c_address,0xA1))
     	for i in range (0xE1,0xE1+7):
-    		calib.append(bus.read_byte_data(i2c_address,i))
+    		calib.append(self.bus.read_byte_data(self.i2c_address,i))
 
     	self.digT.append((calib[1] << 8) | calib[0])
     	self.digT.append((calib[3] << 8) | calib[2])
@@ -75,11 +75,11 @@ class BME280:
     	temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4)
     	hum_raw  = (data[6] << 8)  |  data[7]
 
-    	self.TEMPERATURE = compensate_T(temp_raw)
-    	self.PRESSURE = compensate_P(pres_raw)
-    	self.HUMIDITY = compensate_H(hum_raw)
+    	self.TEMPERATURE = self.compensate_T(temp_raw)
+    	self.PRESSURE = self.compensate_P(pres_raw)
+    	self.HUMIDITY = self.compensate_H(hum_raw)
 
-    def compensate_P(adc_P):
+    def compensate_P(self,adc_P):
     	global  t_fine
     	pressure = 0.0
 
@@ -103,7 +103,7 @@ class BME280:
 
     	return pressure/100
 
-    def compensate_T(adc_T):
+    def compensate_T(self,adc_T):
     	global t_fine
     	v1 = (adc_T / 16384.0 - self.digT[0] / 1024.0) * self.digT[1]
     	v2 = (adc_T / 131072.0 - self.digT[0] / 8192.0) * (adc_T / 131072.0 - self.digT[0] / 8192.0) * self.digT[2]
@@ -111,7 +111,7 @@ class BME280:
     	temperature = t_fine / 5120.0
     	return temperature
 
-    def compensate_H(adc_H):
+    def compensate_H(self, adc_H):
     	global t_fine
     	var_h = t_fine - 76800.0
     	if var_h != 0:
@@ -140,6 +140,6 @@ class BME280:
     	config_reg    = (t_sb << 5) | (filter << 2) | spi3w_en
     	ctrl_hum_reg  = osrs_h
 
-    	writeReg(0xF2,ctrl_hum_reg)
-    	writeReg(0xF4,ctrl_meas_reg)
-    	writeReg(0xF5,config_reg)
+    	self.writeReg(0xF2,ctrl_hum_reg)
+    	self.writeReg(0xF4,ctrl_meas_reg)
+    	self.writeReg(0xF5,config_reg)
