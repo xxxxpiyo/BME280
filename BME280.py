@@ -27,7 +27,7 @@ class BME280:
     def writeReg(reg_address, data):
     	self.bus.write_byte_data(i2c_address,reg_address,data)
 
-    def get_calib_param():
+    def get_calib_param(self):
     	calib = []
 
     	for i in range (0x88,0x88+24):
@@ -127,7 +127,7 @@ class BME280:
         return var_h
 
 
-    def setup():
+    def setup(self):
     	osrs_t = 1			#Temperature oversampling x 1
     	osrs_p = 1			#Pressure oversampling x 1
     	osrs_h = 1			#Humidity oversampling x 1
