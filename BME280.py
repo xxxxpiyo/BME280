@@ -15,7 +15,7 @@ class BME280:
 
     t_fine = 0.0
 
-    def __init__(i2c_address = 0x76, bus_number = 1):
+    def __init__(self, i2c_address = 0x76, bus_number = 1):
         setup()
         get_calib_param()
 
