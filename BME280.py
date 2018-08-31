@@ -6,6 +6,9 @@ import time
 class BME280:
     bus_number  = 1
     i2c_address = 0x76
+    PRESSURE = 0.0
+    TEMPERATURE = 0.0
+    HUMIDITY = 0
 
     bus = SMBus(bus_number)
 
@@ -62,7 +65,7 @@ class BME280:
     		if digH[i] & 0x8000:
     			digH[i] = (-digH[i] ^ 0xFFFF) + 1
 
-    def readData():
+    def readData(self):
     	data = []
     	for i in range (0xF7, 0xF7+8):
     		data.append(bus.read_byte_data(i2c_address,i))
@@ -70,9 +73,9 @@ class BME280:
     	temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4)
     	hum_raw  = (data[6] << 8)  |  data[7]
 
-    	compensate_T(temp_raw)
-    	compensate_P(pres_raw)
-    	compensate_H(hum_raw)
+    	self.TEMPERATURE = compensate_T(temp_raw)
+    	self.PRESSURE = compensate_P(pres_raw)
+    	self.HUMIDITY = compensate_H(hum_raw)
 
     def compensate_P(adc_P):
     	global  t_fine
