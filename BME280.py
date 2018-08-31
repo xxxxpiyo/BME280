@@ -76,7 +76,7 @@ class BME280:
     	hum_raw  = (data[6] << 8)  |  data[7]
 
     	self.TEMPERATURE = round(self.compensate_T(temp_raw), 1)
-    	self.PRESSURE = self.compensate_P(pres_raw)
+    	self.PRESSURE = round(self.compensate_P(pres_raw), 0)
     	self.HUMIDITY = round(self.compensate_H(hum_raw), 1)
 
     def compensate_P(self,adc_P):
